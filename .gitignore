@@ -1,0 +1,25 @@
+# Visual Studio 生成目录
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio 用户配置
+*.user
+*.suo
+*.userosscache
+*.vcxproj
+
+# IDE 临时文件
+.vs/
+.idea/
+
+# 编译输出文件
+*.exe
+*.pdb
+*.ilk
+*.log
+*.tlog
+*.cache
