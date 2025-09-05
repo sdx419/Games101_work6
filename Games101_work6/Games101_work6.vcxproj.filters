@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Scripts\AreaLight.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Scripts\Bounds3.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -28,9 +25,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Scripts\Intersection.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Scripts\Light.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Scripts\Material.hpp">
@@ -58,6 +52,18 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Scripts\Vector.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Light\AreaLight.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Light\Light.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\AreaLight.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Light.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

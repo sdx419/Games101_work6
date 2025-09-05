@@ -28,6 +28,7 @@ class Bounds3
     }
 
     Vector3f Diagonal() const { return pMax - pMin; }
+    // calculate which axis is the "longest"
     int maxExtent() const
     {
         Vector3f d = Diagonal();
@@ -46,13 +47,13 @@ class Bounds3
     }
 
     Vector3f Centroid() { return 0.5 * pMin + 0.5 * pMax; }
-    Bounds3 Intersect(const Bounds3& b)
+    /*Bounds3 Intersect(const Bounds3& b)
     {
         return Bounds3(Vector3f(fmax(pMin.x, b.pMin.x), fmax(pMin.y, b.pMin.y),
                                 fmax(pMin.z, b.pMin.z)),
                        Vector3f(fmin(pMax.x, b.pMax.x), fmin(pMax.y, b.pMax.y),
                                 fmin(pMax.z, b.pMax.z)));
-    }
+    }*/
 
     Vector3f Offset(const Vector3f& p) const
     {
@@ -73,7 +74,7 @@ class Bounds3
         bool z = (b1.pMax.z >= b2.pMin.z) && (b1.pMin.z <= b2.pMax.z);
         return (x && y && z);
     }
-
+    
     bool Inside(const Vector3f& p, const Bounds3& b)
     {
         return (p.x >= b.pMin.x && p.x <= b.pMax.x && p.y >= b.pMin.y &&
@@ -96,7 +97,24 @@ inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir,
     // invDir: ray direction(x,y,z), invDir=(1.0/x,1.0/y,1.0/z), use this because Multiply is faster that Division
     // dirIsNeg: ray direction(x,y,z), dirIsNeg=[int(x>0),int(y>0),int(z>0)], use this to simplify your logic
     // TODO test if ray bound intersects
+    float t_enterX = (pMin.x - ray.origin.x) * ray.direction_inv.x;
+    float t_exitX = (pMax.x - ray.origin.x) * ray.direction_inv.x;
+    if (dirIsNeg[0] == 0)
+        std::swap(t_enterX, t_exitX);
     
+    float t_enterY = (pMin.y - ray.origin.y) * ray.direction_inv.y;
+    float t_exitY = (pMax.y - ray.origin.y) * ray.direction_inv.y;
+    if (dirIsNeg[1] == 0)
+        std::swap(t_enterY, t_exitY);
+
+    float t_enterZ = (pMin.z - ray.origin.z) * ray.direction_inv.z;
+    float t_exitZ = (pMax.z - ray.origin.z) * ray.direction_inv.z;
+    if (dirIsNeg[2] == 0)
+        std::swap(t_enterZ, t_exitZ);
+
+    float t_enter = std::fmaxf(t_enterX, std::fmaxf(t_enterY, t_enterZ));
+    float t_exit = std::fmin(t_exitX, std::fmin(t_exitY, t_exitZ));
+    return t_enter < t_exit && t_exit > 0;
 }
 
 inline Bounds3 Union(const Bounds3& b1, const Bounds3& b2)

@@ -115,6 +115,9 @@ public:
 
             triangles.emplace_back(face_vertices[0], face_vertices[1],
                                    face_vertices[2], new_mat);
+            //std::cout << "index->" << i/3 << ":position->" << face_vertices[0] <<" "
+               // << face_vertices[1] << " " << face_vertices[2] << std::endl;
+
         }
 
         bounding_box = Bounds3(min_vert, max_vert);
@@ -212,10 +215,15 @@ inline Intersection Triangle::getIntersection(Ray ray)
 {
     Intersection inter;
 
+    // 光线从背面射入，默认无交点
     if (dotProduct(ray.direction, normal) > 0)
         return inter;
+
+    // 重心坐标u，v,以及射线参数t
     double u, v, t_tmp = 0;
+    // pvec表示Moller Trumbore算法中的S1
     Vector3f pvec = crossProduct(ray.direction, e2);
+    // det表示Moller Trumbore中的系数项
     double det = dotProduct(e1, pvec);
     if (fabs(det) < EPSILON)
         return inter;
@@ -232,10 +240,15 @@ inline Intersection Triangle::getIntersection(Ray ray)
     t_tmp = dotProduct(e2, qvec) * det_inv;
 
     // TODO find ray triangle intersection
+    if (t_tmp < 0)
+        return inter;
 
-
-
-
+    inter.happened = true;
+    inter.coords = ray.origin + t_tmp * ray.direction;
+    inter.distance = t_tmp;
+    inter.obj = this;
+    inter.m = m;
+    inter.normal = normal;
     return inter;
 }
 

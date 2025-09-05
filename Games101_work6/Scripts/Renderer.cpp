@@ -36,6 +36,14 @@ void Renderer::Render(const Scene& scene)
 
             // Don't forget to normalize this direction!
 
+            float height = tan(deg2rad(scene.fov / 2)) * 2;
+            float width = height * imageAspectRatio;
+            x = (i - scene.width / 2.0f) / scene.width * width;
+            y = (scene.height / 2.0f - j) / scene.height * height;
+
+            Vector3f pixelPos(eye_pos.x + x , eye_pos.y + y, eye_pos.z - 1);
+            Ray ray(eye_pos, normalize(Vector3f(x, y, -1)));
+            framebuffer[m++] = scene.castRay(ray, 0);
         }
         UpdateProgress(j / (float)scene.height);
     }
