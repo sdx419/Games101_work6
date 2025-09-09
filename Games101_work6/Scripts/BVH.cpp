@@ -12,7 +12,7 @@ BVHAccel::BVHAccel(std::vector<Object*> p, int maxPrimsInNode,
     if (primitives.empty())
         return;
 
-    root = recursiveBuild(primitives);
+    root = recursiveBuildWithSAH(primitives);
 
     time(&stop);
     double diff = difftime(stop, start);
@@ -149,8 +149,8 @@ BVHBuildNode* BVHAccel::recursiveBuildWithSAH(std::vector<Object*> objects)
             break;
         }
 
-        int partIndex;
-        int surfaceArea = std::numeric_limits<double>::max();
+        int partIndex = 0;
+        auto surfaceArea = std::numeric_limits<double>::max();
 
         for (int partitionIndex = 0; partitionIndex < objects.size() - 1; partitionIndex++)
         {
@@ -162,11 +162,14 @@ BVHBuildNode* BVHAccel::recursiveBuildWithSAH(std::vector<Object*> objects)
             for (int i = partitionIndex + 1; i < objects.size(); i++)
                 bound2 = Union(bound2, objects[i]->getBounds());
 
-            if (bound1.SurfaceArea() + bound2.SurfaceArea() < surfaceArea)
+            if (bound1.SurfaceArea() / bounds.SurfaceArea() * partitionIndex + bound2.SurfaceArea() / bounds.SurfaceArea() * (objects.size() - partitionIndex) < surfaceArea)
+            {
                 partIndex = partitionIndex;
+                surfaceArea = bound1.SurfaceArea() / bounds.SurfaceArea() * partitionIndex + bound2.SurfaceArea() / bounds.SurfaceArea() * (objects.size() - partitionIndex);
+            }
         }
 
-        auto leftShapes = std::vector<Object*>(objects.begin(), objects.begin() + partIndex);
+        auto leftShapes = std::vector<Object*>(objects.begin(), objects.begin() + partIndex + 1);
         auto rightShapes = std::vector<Object*>(objects.begin() + partIndex + 1, objects.end());
         node->left = recursiveBuildWithSAH(leftShapes);
         node->right = recursiveBuildWithSAH(rightShapes);
